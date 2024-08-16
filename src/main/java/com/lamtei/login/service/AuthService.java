@@ -1,6 +1,7 @@
 package com.lamtei.login.service;
 
 import com.lamtei.login.config.SecurityConfig;
+import com.lamtei.login.constants.Constants;
 import com.lamtei.login.entity.User;
 import com.lamtei.login.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,12 @@ public class AuthService {
     public String registerUser(User user) {
         BCryptPasswordEncoder bCryptPasswordEncoder = securityConfig.passwordEncoder();
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            return "Username already exists!";
+            return Constants.USERNAME_TAKEN;
         }
 
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
-        return "User registered successfully!";
+        return Constants.USER_REGISTERED;
     }
 
     public String loginUser(String username, String password) {
@@ -35,9 +36,9 @@ public class AuthService {
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
-                return "Login successful!";
+                return Constants.LOGIN_SUCCESS;
             }
         }
-        return "Invalid username or password!";
+        return Constants.INVALID_CREDENTIALS;
     }
 }
